@@ -1,5 +1,5 @@
-import { SystemService } from "@/src/services/api/system/system.service";
-import { SystemStatus } from "@/src/services/api/system/system.types";
+import { SystemService } from "@/src/infrastructure/api/system/system.service";
+import { SystemStatus } from "@/src/infrastructure/api/system/system.types";
 
 export type SystemDecision =
   | { type: "OK"; status: SystemStatus }
