@@ -1,14 +1,17 @@
+import React from "react";
+
 import { RootNavigator } from "@/src/app/navigation/RootNavigator";
+import { useAppState } from "@/src/app/runtime/AppStateProvider";
+import { useAppRuntime } from "@/src/app/runtime/useAppRuntime";
 import { FatalErrorScreen } from "@/src/app/shell/screens/FatalErrorScreen";
 import { MaintenanceScreen } from "@/src/app/shell/screens/MaintenanceScreen";
 import { OfflineScreen } from "@/src/app/shell/screens/OfflineScreen";
 import { SystemUI } from "@/src/app/system/SystemUI/SystemUI";
-import React from "react";
-
-type AppMode = "ready" | "offline" | "maintenance" | "fatal";
 
 export const AppShell = () => {
-  const mode: AppMode = "ready"; // 👈 temporal
+  useAppRuntime();
+
+  const { mode } = useAppState();
 
   return (
     <>
@@ -18,7 +21,7 @@ export const AppShell = () => {
   );
 };
 
-const AppGate = ({ mode }: { mode: AppMode }) => {
+const AppGate = ({ mode }: { mode: string }) => {
   switch (mode) {
     case "offline":
       return <OfflineScreen />;
@@ -29,12 +32,11 @@ const AppGate = ({ mode }: { mode: AppMode }) => {
     case "fatal":
       return <FatalErrorScreen />;
 
+    case "update-required":
+      return <MaintenanceScreen />; // puedes hacer UpdateScreen luego
+
     case "ready":
     default:
-      return <AppContent />;
+      return <RootNavigator />;
   }
-};
-
-const AppContent = () => {
-  return <RootNavigator />;
 };
