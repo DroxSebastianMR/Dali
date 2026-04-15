@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { authStorage } from "../auth.storage";
-import { AuthStatus, AuthUser } from "../auth.types";
+import { authStorage } from "../storage/auth.storage";
+import { AuthStatus, AuthUser } from "../types/auth.types";
 
 type AuthContextType = {
   status: AuthStatus;

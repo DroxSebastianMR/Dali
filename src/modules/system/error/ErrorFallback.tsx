@@ -1,4 +1,4 @@
-import { ErrorType } from "@/src/modules/system/ErrorBoundary/ErrorTypes";
+import { ErrorType } from "@/src/modules/system/error/ErrorTypes";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 

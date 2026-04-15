@@ -1,7 +1,7 @@
 import { useAppState } from "@/src/app/runtime/AppStateProvider";
 import { checkSystemStatus } from "@/src/domain/system/system.usecase";
 import { BootstrapState } from "@/src/modules/bootstrap/bootstrap.types";
-import { BootstrapLoader } from "@/src/modules/bootstrap/BootstrapLoader";
+import { BootstrapLoader } from "@/src/modules/bootstrap/components/BootstrapLoader";
 import React, { useCallback, useEffect, useState } from "react";
 
 type Props = {

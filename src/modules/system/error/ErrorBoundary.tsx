@@ -1,8 +1,8 @@
-import { ErrorFallback } from "@/src/modules/system/ErrorBoundary/ErrorFallback";
-import { resolveErrorType } from "@/src/modules/system/ErrorBoundary/ErrorPolicy";
-import { ErrorReporter } from "@/src/modules/system/ErrorBoundary/ErrorReporter";
+import { ErrorFallback } from "@/src/modules/system/error/ErrorFallback";
+import { resolveErrorType } from "@/src/modules/system/error/ErrorPolicy";
+import { ErrorReporter } from "@/src/modules/system/error/ErrorReporter";
+import { ErrorBoundaryState } from "@/src/modules/system/error/types";
 import React from "react";
-import { ErrorBoundaryState } from "./types";
 
 type Props = {
   children: React.ReactNode;
