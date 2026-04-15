@@ -1,17 +1,16 @@
-import { AppBootstrap } from "@/src/app/bootstrap/AppBootstrap";
-import { ThemeProvider } from "@/src/app/providers/theme/ThemeProvider";
 import { AppStateProvider } from "@/src/app/runtime/AppStateProvider";
-import { SystemUIProvider } from "@/src/app/system/SystemUI/SystemUIProvider";
-import React from "react";
+import { AuthProvider } from "@/src/modules/auth/context/AuthProvider";
+import { AppBootstrap } from "@/src/modules/bootstrap/AppBootstrap";
+import { SystemUIProvider } from "@/src/modules/system/ui/SystemUIProvider";
 
 export const AppProviders = ({ children }: { children: React.ReactNode }) => {
   return (
-    <ThemeProvider>
-      <SystemUIProvider>
-        <AppStateProvider>
+    <SystemUIProvider>
+      <AppStateProvider>
+        <AuthProvider>
           <AppBootstrap>{children}</AppBootstrap>
-        </AppStateProvider>
-      </SystemUIProvider>
-    </ThemeProvider>
+        </AuthProvider>
+      </AppStateProvider>
+    </SystemUIProvider>
   );
 };
