@@ -2,9 +2,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import React from "react";
 import { ActivityIndicator, View } from "react-native";
 
+import { AuthNavigator } from "@/src/app/navigation/AuthNavigator";
+import { MainNavigator } from "@/src/app/navigation/MainNavigator";
 import { useAuth } from "@/src/modules/auth/context/AuthProvider";
-import { AuthNavigator } from "./AuthNavigator";
-import { MainNavigator } from "./MainNavigator";
 
 export const RootNavigator = () => {
   const { status } = useAuth();
