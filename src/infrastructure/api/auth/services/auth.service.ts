@@ -36,7 +36,6 @@ export const authService = {
     return data;
   },
 
-  // 🔓 LOGOUT
   logout: async (refreshToken: string): Promise<void> => {
     await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT, {
       refresh_token: refreshToken,

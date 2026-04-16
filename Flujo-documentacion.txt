@@ -1,10 +1,8 @@
-# 📌 Arquitectura del Módulo de Autenticación (Frontend)
+📌 Arquitectura del Módulo de Autenticación (Frontend)
 
-## 🎯 Objetivo
+Objetivo
 
 Definir claramente las responsabilidades de cada capa (Provider, UseCase, Service, Hooks, Screens y Componentes) y el flujo de autenticación para garantizar una arquitectura escalable, mantenible y desacoplada.
-
----
 
 # 🧱 Capas del sistema
 

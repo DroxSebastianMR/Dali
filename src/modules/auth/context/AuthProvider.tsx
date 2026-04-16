@@ -16,8 +16,6 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [status, setStatus] = useState<AuthStatus>("checking");
   const [user, setUser] = useState<AuthUser | null>(null);
-
-  // 🔹 INIT AUTH (bootstrap auth real)
   useEffect(() => {
     initAuth();
   }, []);
@@ -31,12 +29,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return;
       }
 
-      // 🔥 usa refresh-token endpoint (flujo real)
       const response = await authService.refreshToken(refreshToken);
-
       await authStorage.setTokens(response.accessToken, response.refreshToken);
 
-      // 🔥 obtener usuario real
       const user = await authService.me();
 
       setUser(user);
@@ -48,7 +43,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  // 🔹 LOGIN
   const login = async (email: string, password: string) => {
     const response = await authService.login(email, password);
 
@@ -58,7 +52,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setStatus("authenticated");
   };
 
-  // 🔹 LOGOUT
   const logout = async () => {
     try {
       const refreshToken = await authStorage.getRefreshToken();
@@ -67,7 +60,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         await authService.logout(refreshToken);
       }
     } catch {
-      // no bloquea logout si falla backend
     } finally {
       await authStorage.clear();
       setUser(null);
@@ -82,7 +74,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-// 🔹 HOOK
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

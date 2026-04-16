@@ -1,4 +1,3 @@
-// auth.storage.ts
 import * as SecureStore from "expo-secure-store";
 
 const ACCESS_TOKEN = "access_token";
