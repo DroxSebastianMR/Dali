@@ -5,7 +5,9 @@ export const API_ENDPOINTS = {
 
   AUTH: {
     LOGIN: "/clientes/auth/login",
-    REFRESH: "/clientes/auth/refresh",
+    REFRESH: "/clientes/auth/refresh-token",
+    LOGOUT: "/clientes/auth/logout",
+    ME: "/clientes/auth/me",
   },
 
   PLANES: {

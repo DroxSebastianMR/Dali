@@ -1,11 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { authStorage } from "../storage/auth.storage";
-import { AuthStatus, AuthUser } from "../types/auth.types";
+
+import { authService } from "@/src/infrastructure/api/auth/services/auth.service";
+import { authStorage } from "@/src/modules/auth/storage/auth.storage";
+import { AuthStatus, AuthUser } from "@/src/modules/auth/types/auth.types";
 
 type AuthContextType = {
   status: AuthStatus;
   user: AuthUser | null;
-  login: () => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 };
 
@@ -15,37 +17,62 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [status, setStatus] = useState<AuthStatus>("checking");
   const [user, setUser] = useState<AuthUser | null>(null);
 
+  // 🔹 INIT AUTH (bootstrap auth real)
   useEffect(() => {
-    const bootstrapAuth = async () => {
-      try {
-        const token = await authStorage.getToken();
-
-        if (token) {
-          // simular fetch user
-          setUser({ id: "1", email: "test@mail.com" });
-          setStatus("authenticated");
-        } else {
-          setStatus("unauthenticated");
-        }
-      } catch {
-        setStatus("unauthenticated");
-      }
-    };
-
-    bootstrapAuth();
+    initAuth();
   }, []);
 
-  const login = async () => {
-    await authStorage.setToken("fake-token");
+  const initAuth = async () => {
+    try {
+      const refreshToken = await authStorage.getRefreshToken();
 
-    setUser({ id: "1", email: "test@mail.com" });
+      if (!refreshToken) {
+        setStatus("unauthenticated");
+        return;
+      }
+
+      // 🔥 usa refresh-token endpoint (flujo real)
+      const response = await authService.refreshToken(refreshToken);
+
+      await authStorage.setTokens(response.accessToken, response.refreshToken);
+
+      // 🔥 obtener usuario real
+      const user = await authService.me();
+
+      setUser(user);
+      setStatus("authenticated");
+    } catch (error) {
+      await authStorage.clear();
+      setUser(null);
+      setStatus("unauthenticated");
+    }
+  };
+
+  // 🔹 LOGIN
+  const login = async (email: string, password: string) => {
+    const response = await authService.login(email, password);
+
+    await authStorage.setTokens(response.accessToken, response.refreshToken);
+
+    setUser(response.user);
     setStatus("authenticated");
   };
 
+  // 🔹 LOGOUT
   const logout = async () => {
-    await authStorage.removeToken();
-    setUser(null);
-    setStatus("unauthenticated");
+    try {
+      const refreshToken = await authStorage.getRefreshToken();
+
+      if (refreshToken) {
+        await authService.logout(refreshToken);
+      }
+    } catch {
+      // no bloquea logout si falla backend
+    } finally {
+      await authStorage.clear();
+      setUser(null);
+      setStatus("unauthenticated");
+    }
   };
 
   return (
@@ -55,8 +82,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+// 🔹 HOOK
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used inside AuthProvider");
+  if (!context) {
+    throw new Error("useAuth must be used inside AuthProvider");
+  }
   return context;
 };

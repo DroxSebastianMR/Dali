@@ -11,7 +11,7 @@ export class NotificationService {
     await Notifications.scheduleNotificationAsync({
       content: {
         title: "🔥 Dali",
-        body: "Tu app ya está lista 🚀",
+        body: "Preparte para Dali",
       },
       trigger: {
         type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
