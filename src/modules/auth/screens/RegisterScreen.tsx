@@ -1,69 +1,52 @@
-import React, { useState } from "react";
-import { Text, View } from "react-native";
-
 import { AuthButton } from "@/src/modules/auth/components/AuthButton";
 import { AuthHeader } from "@/src/modules/auth/components/AuthHeader";
 import { AuthInput } from "@/src/modules/auth/components/AuthInput";
 import { SocialLogin } from "@/src/modules/auth/components/SocialLogin";
 import { useAuth } from "@/src/modules/auth/context/AuthProvider";
+import React, { useState } from "react";
+import { Text, View } from "react-native";
 
-import { AuthStackParamList } from "@/src/app/navigation/AuthNavigator";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-
-type NavigationProp = NativeStackNavigationProp<AuthStackParamList, "Login">;
-
-export const LoginScreen = () => {
+export const RegisterScreen = () => {
   const { login } = useAuth();
-  const navigation = useNavigation<NavigationProp>();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [nombre, setNombre] = useState("");
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     await login(email, password);
   };
 
   return (
     <View className="flex-1 bg-[#f6f8f6] justify-center px-6">
       <View className="w-full max-w-md self-center">
-        <AuthHeader />
+        <AuthHeader title="Crear cuenta" subtitle="Regístrate para continuar" />
 
         <View className="mt-6">
+          <AuthInput
+            placeholder="Nombre"
+            value={nombre}
+            onChangeText={setNombre}
+          />
           <AuthInput
             placeholder="Email"
             value={email}
             onChangeText={setEmail}
           />
-
           <AuthInput
             placeholder="Contraseña"
             secure
             value={password}
             onChangeText={setPassword}
           />
-
-          <Text
-            className="text-center text-gray-400 text-sm mt-2"
-            onPress={() => navigation.navigate("RecoverPassword")}
-          >
-            ¿Olvidaste tu contraseña?
-          </Text>
-
-          <AuthButton title="Sign in" onPress={handleLogin} />
+          <AuthButton title="Crear cuenta" onPress={handleRegister} />
         </View>
-
         <SocialLogin />
 
         <View className="mt-12 items-center">
           <Text className="text-gray-400 text-sm">
-            ¿No tienes cuenta?{" "}
-            <Text
-              className="text-gray-900 font-semibold"
-              onPress={() => navigation.navigate("Register")}
-            >
-              Crear cuenta
-            </Text>
+            ¿Ya tienes cuenta?{" "}
+            <Text className="text-gray-900 font-semibold">Iniciar sesión</Text>
           </Text>
         </View>
       </View>
