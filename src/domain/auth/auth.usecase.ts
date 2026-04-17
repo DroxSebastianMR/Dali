@@ -10,7 +10,6 @@ export const loginUser = async (
   password: string,
 ): Promise<LoginResponse> => {
   const response = await authService.login(email, password);
-
   if (!response.accessToken) {
     throw new Error("Token inválido");
   }
