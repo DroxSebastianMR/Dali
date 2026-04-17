@@ -10,7 +10,7 @@ export const API_ENDPOINTS = {
     ME: "/clientes/auth/me",
   },
 
-  PLANES: {
-    LIST: "/planes",
+  NOTIFICATIONS: {
+    REGISTER_TOKEN: "/notifications/register-token",
   },
 } as const;

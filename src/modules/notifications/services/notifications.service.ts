@@ -7,24 +7,25 @@ export class NotificationService {
     return status === "granted";
   }
 
-  static async scheduleLocalNotification() {
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "🔥 Dali",
-        body: "Preparte para Dali",
-      },
-      trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-        seconds: 3,
-        repeats: false,
-      },
-    });
-  }
-
-  static async getPushToken() {
+  static async getPushToken(): Promise<string | null> {
     if (!Device.isDevice) return null;
 
     const token = await Notifications.getExpoPushTokenAsync();
     return token.data;
+  }
+
+  static onReceive(listener: (notification: any) => void) {
+    return Notifications.addNotificationReceivedListener(listener);
+  }
+
+  static onResponse(listener: (response: any) => void) {
+    return Notifications.addNotificationResponseReceivedListener(listener);
+  }
+
+  static async scheduleLocal(notification: { title: string; body: string }) {
+    await Notifications.scheduleNotificationAsync({
+      content: notification,
+      trigger: null,
+    });
   }
 }
