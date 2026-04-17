@@ -7,8 +7,15 @@ import { AuthInput } from "@/src/modules/auth/components/AuthInput";
 import { SocialLogin } from "@/src/modules/auth/components/SocialLogin";
 import { useAuth } from "@/src/modules/auth/context/AuthProvider";
 
+import { AuthStackParamList } from "@/src/app/navigation/AuthNavigator";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
+type NavigationProp = NativeStackNavigationProp<AuthStackParamList, "Login">;
+
 export const LoginScreen = () => {
   const { login } = useAuth();
+  const navigation = useNavigation<NavigationProp>();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,7 +43,10 @@ export const LoginScreen = () => {
             onChangeText={setPassword}
           />
 
-          <Text className="text-center text-gray-400 text-sm mt-2">
+          <Text
+            className="text-center text-gray-400 text-sm mt-2"
+            onPress={() => navigation.navigate("RecoverPassword")}
+          >
             ¿Olvidaste tu contraseña?
           </Text>
 
@@ -48,7 +58,12 @@ export const LoginScreen = () => {
         <View className="mt-12 items-center">
           <Text className="text-gray-400 text-sm">
             ¿No tienes cuenta?{" "}
-            <Text className="text-gray-900 font-semibold">Crear cuenta</Text>
+            <Text
+              className="text-gray-900 font-semibold"
+              onPress={() => navigation.navigate("Register")}
+            >
+              Crear cuenta
+            </Text>
           </Text>
         </View>
       </View>

@@ -1,8 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-import { authService } from "@/src/infrastructure/api/auth/services/auth.service";
 import { authStorage } from "@/src/modules/auth/storage/auth.storage";
 import { AuthStatus, AuthUser } from "@/src/modules/auth/types/auth.types";
+
+import {
+  getCurrentUser,
+  loginUser,
+  logoutUser,
+  refreshUserToken,
+} from "@/src/domain/auth/auth.usecase";
 
 type AuthContextType = {
   status: AuthStatus;
@@ -16,6 +22,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [status, setStatus] = useState<AuthStatus>("checking");
   const [user, setUser] = useState<AuthUser | null>(null);
+
   useEffect(() => {
     initAuth();
   }, []);
@@ -29,14 +36,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return;
       }
 
-      const response = await authService.refreshToken(refreshToken);
+      const response = await refreshUserToken(refreshToken);
+
       await authStorage.setTokens(response.accessToken, response.refreshToken);
 
-      const user = await authService.me();
+      const user = await getCurrentUser();
 
       setUser(user);
       setStatus("authenticated");
-    } catch (error) {
+    } catch {
       await authStorage.clear();
       setUser(null);
       setStatus("unauthenticated");
@@ -44,7 +52,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const login = async (email: string, password: string) => {
-    const response = await authService.login(email, password);
+    const response = await loginUser(email, password);
 
     await authStorage.setTokens(response.accessToken, response.refreshToken);
 
@@ -57,9 +65,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const refreshToken = await authStorage.getRefreshToken();
 
       if (refreshToken) {
-        await authService.logout(refreshToken);
+        await logoutUser(refreshToken);
       }
-    } catch {
     } finally {
       await authStorage.clear();
       setUser(null);
