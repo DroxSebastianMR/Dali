@@ -21,6 +21,10 @@ export const SystemUIProvider = ({
 
   const showToast = useCallback((toast: ToastPayload): void => {
     setState((s) => ({ ...s, toast }));
+
+    setTimeout(() => {
+      setState((s) => ({ ...s, toast: undefined }));
+    }, 3000);
   }, []);
 
   const hideToast = useCallback((): void => {
