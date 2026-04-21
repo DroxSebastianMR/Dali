@@ -1,14 +1,17 @@
 import { RootNavigator } from "@/src/app/navigation/RootNavigator";
 import { AppMode, useAppState } from "@/src/app/runtime/AppStateProvider";
 import { useAppRuntime } from "@/src/app/runtime/useAppRuntime";
-import { FatalErrorScreen } from "@/src/app/shell/screens/FatalErrorScreen";
-import { MaintenanceScreen } from "@/src/app/shell/screens/MaintenanceScreen";
-import { OfflineScreen } from "@/src/app/shell/screens/OfflineScreen";
+import { FatalErrorScreen } from "@/src/modules/app-shell/screens/FatalErrorScreen";
+import { MaintenanceScreen } from "@/src/modules/app-shell/screens/MaintenanceScreen";
+import { OfflineScreen } from "@/src/modules/app-shell/screens/OfflineScreen";
+import { useNotifications } from "@/src/modules/notifications/hooks/useNotifications";
 import { SystemUI } from "@/src/modules/system/ui/SystemUI";
 import React from "react";
 
 export const AppShell = () => {
   useAppRuntime();
+  useNotifications();
+
   const { mode } = useAppState();
 
   return (

@@ -1,4 +1,4 @@
-import { ErrorType } from "@/src/modules/system/ErrorBoundary/ErrorTypes";
+import { ErrorType } from "@/src/modules/system/error/ErrorTypes";
 
 export function resolveErrorType(error: Error): ErrorType {
   if (error.message.includes("Network")) return ErrorType.NETWORK;

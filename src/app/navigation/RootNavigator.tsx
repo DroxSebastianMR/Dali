@@ -1,24 +1,38 @@
 import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
-import { ActivityIndicator, View } from "react-native";
 
+import { AppNavigator } from "@/src/app/navigation/AppNavigator";
+import { AuthNavigator } from "@/src/app/navigation/AuthNavigator";
+import { SplashScreen } from "@/src/app/navigation/SplashScreen";
 import { useAuth } from "@/src/modules/auth/context/AuthProvider";
-import { AuthNavigator } from "./AuthNavigator";
-import { MainNavigator } from "./MainNavigator";
+
+type RootStackParamList = {
+  Splash: undefined;
+  Auth: undefined;
+  App: undefined;
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export const RootNavigator = () => {
   const { status } = useAuth();
-  if (status === "checking") {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
 
   return (
     <NavigationContainer>
-      {status === "authenticated" ? <MainNavigator /> : <AuthNavigator />}
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {status === "checking" && (
+          <Stack.Screen name="Splash" component={SplashScreen} />
+        )}
+
+        {status === "unauthenticated" && (
+          <Stack.Screen name="Auth" component={AuthNavigator} />
+        )}
+
+        {status === "authenticated" && (
+          <Stack.Screen name="App" component={AppNavigator} />
+        )}
+      </Stack.Navigator>
     </NavigationContainer>
   );
 };

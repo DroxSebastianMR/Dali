@@ -1,0 +1,244 @@
+📌 Arquitectura del Módulo de Autenticación (Frontend)
+
+Objetivo
+
+Definir claramente las responsabilidades de cada capa (Provider, UseCase, Service, Hooks, Screens y Componentes) y el flujo de autenticación para garantizar una arquitectura escalable, mantenible y desacoplada.
+
+# 🧱 Capas del sistema
+
+## 🔷 1. Screens (UI / Pantallas)
+
+**Responsabilidad:**
+
+* Renderizar la interfaz de usuario
+* Capturar inputs del usuario (email, password, etc.)
+* Invocar acciones del sistema (login, logout, etc.)
+
+**NO debe hacer:**
+
+* Lógica de negocio
+* Llamadas directas a API
+* Manejo de tokens
+
+**Ejemplo:**
+
+* LoginScreen
+* RegisterScreen
+
+---
+
+## 🔷 2. Components (Componentes UI)
+
+**Responsabilidad:**
+
+* Elementos reutilizables de UI (inputs, botones, cards)
+* Presentación visual
+
+**NO debe hacer:**
+
+* Lógica de negocio
+* Acceso a API
+
+---
+
+## 🔷 3. Hooks (Custom Hooks)
+
+**Responsabilidad:**
+
+* Encapsular lógica reutilizable de UI
+* Facilitar acceso a Providers
+
+**Ejemplo:**
+
+* useAuth()
+
+**NO debe hacer:**
+
+* Lógica de negocio compleja
+* Acceso directo a API (excepto casos controlados)
+
+---
+
+## 🔷 4. Provider (Estado Global)
+
+**Responsabilidad:**
+
+* Manejar el estado global de autenticación
+* Exponer funciones al resto de la app (login, logout, etc.)
+* Controlar el estado de sesión:
+
+  * checking
+  * authenticated
+  * unauthenticated
+
+**NO debe hacer:**
+
+* Lógica de negocio compleja
+* Validaciones profundas
+* Decisiones de negocio
+
+**Ejemplo:**
+
+* AuthProvider
+
+---
+
+## 🔷 5. UseCases (Lógica de Negocio) 🔥
+
+**Responsabilidad:**
+
+* Contener la lógica real del sistema
+* Orquestar múltiples operaciones:
+
+  * llamadas a API
+  * manejo de storage
+  * validaciones
+* Definir el comportamiento del sistema
+
+**Ejemplos:**
+
+* login.usecase.ts
+* refresh-session.usecase.ts
+* logout.usecase.ts
+
+**Aquí ocurre:**
+
+* Guardado de tokens
+* Validación de sesión
+* Flujo de autenticación
+
+---
+
+## 🔷 6. Services (Infraestructura / API)
+
+**Responsabilidad:**
+
+* Realizar llamadas HTTP al backend
+* Encapsular endpoints
+
+**NO debe hacer:**
+
+* Lógica de negocio
+* Manejo de estado global
+
+**Ejemplo:**
+
+* auth.service.ts
+* system.service.ts
+
+---
+
+## 🔷 7. Storage (Persistencia local)
+
+**Responsabilidad:**
+
+* Guardar y recuperar datos locales (tokens)
+* Manejar almacenamiento seguro
+
+**Ejemplo:**
+
+* auth.storage.ts
+
+---
+
+# 🔄 Flujos del sistema
+
+---
+
+## 🔐 1. Flujo de Login
+
+```plaintext
+LoginScreen
+   ↓
+AuthProvider.login()
+   ↓
+login.usecase
+   ↓
+authService.login (API)
+   ↓
+Backend
+   ↓
+Guardar tokens (storage)
+   ↓
+Retornar usuario
+   ↓
+Actualizar estado (authenticated)
+```
+
+---
+
+## 🔁 2. Flujo de Auto-login (Bootstrap)
+
+```plaintext
+App inicia
+   ↓
+AuthProvider.initAuth()
+   ↓
+refresh.usecase
+   ↓
+authService.refresh-token
+   ↓
+Guardar nuevos tokens
+   ↓
+authService.me
+   ↓
+Obtener usuario
+   ↓
+Estado: authenticated
+```
+
+---
+
+## 🔓 3. Flujo de Logout
+
+```plaintext
+UI (botón logout)
+   ↓
+AuthProvider.logout()
+   ↓
+logout.usecase
+   ↓
+authService.logout
+   ↓
+Eliminar tokens (storage)
+   ↓
+Estado: unauthenticated
+```
+
+---
+
+## ⚠️ 4. Manejo de errores
+
+* Token inválido → limpiar sesión
+* Error de red → mantener estado controlado
+* 401 → usar refresh token (interceptor)
+
+---
+
+# 📐 Principios de arquitectura
+
+* Separación de responsabilidades
+* Bajo acoplamiento
+* Alta cohesión
+* Escalabilidad
+* Testeabilidad
+
+---
+
+# 🧠 Reglas clave
+
+* Screens → solo UI
+* Provider → estado global
+* UseCase → lógica del sistema
+* Service → comunicación API
+* Storage → persistencia
+
+---
+
+# 🚀 Beneficios
+
+* Código mantenible
+* Escalable a equipos grandes
+* Fácil de testear
+* Flujo claro y predecible
+* Preparado para producción

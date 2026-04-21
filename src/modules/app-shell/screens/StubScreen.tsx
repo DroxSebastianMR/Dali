@@ -19,18 +19,17 @@ export const StubScreen = ({
   onAction,
 }: Props) => {
   return (
-    <View className="flex-1 bg-[#2bee6c] items-center justify-center px-6">
-      <View className="w-full max-w-md bg-white rounded-3xl p-8 shadow-lg items-center">
-        <Text className="text-2xl font-bold text-gray-900 mb-2">Dali</Text>
-
-        <Text className="text-lg font-semibold text-gray-700 mb-2">
+    <View className="flex-1 bg-primary items-center justify-center px-6">
+      <View className="w-full max-w-md bg-surface rounded-3xl p-8 shadow-lg items-center">
+        <Text className="text-2xl font-bold text-textPrimary mb-2">Dali</Text>
+        <Text className="text-lg font-semibold text-textSecondary mb-2">
           {title}
         </Text>
 
+        {/* MESSAGE */}
         {message && (
-          <Text className="text-gray-500 text-center mb-8">{message}</Text>
+          <Text className="text-textSecondary text-center mb-8">{message}</Text>
         )}
-
         <View className="w-full">
           {showRetry && (
             <Pressable
@@ -44,14 +43,13 @@ export const StubScreen = ({
           {actionLabel && onAction && (
             <Pressable
               onPress={onAction}
-              className="bg-[#2bee6c] py-3 rounded-xl items-center border border-[#2bee6c]"
+              className="bg-primary py-3 rounded-xl items-center border border-primary active:bg-primaryDark"
             >
               <Text className="text-black font-semibold">{actionLabel}</Text>
             </Pressable>
           )}
         </View>
       </View>
-
       <Text className="text-white text-xs mt-6 opacity-80">
         © {new Date().getFullYear()} SharkCorp
       </Text>

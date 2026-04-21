@@ -2,7 +2,7 @@ export type ToastType = "success" | "error" | "info";
 
 export type ToastPayload = {
   message: string;
-  type?: ToastType;
+  type?: ToastType; // opcional (correcto para tu caso)
 };
 
 export type SystemUIState = {

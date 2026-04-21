@@ -4,11 +4,14 @@ export const API_ENDPOINTS = {
   },
 
   AUTH: {
-    LOGIN: "/clientes/auth/login",
-    REFRESH: "/clientes/auth/refresh",
+    LOGIN: "/auth/login",
+    REFRESH: "/auth/refresh-token",
+    LOGOUT: "/auth/logout",
+    ME: "/auth/me",
+    SOCIAL_LOGIN: "/auth/social",
   },
 
-  PLANES: {
-    LIST: "/planes",
+  NOTIFICATIONS: {
+    REGISTER_TOKEN: "/notifications/register-token",
   },
 } as const;
