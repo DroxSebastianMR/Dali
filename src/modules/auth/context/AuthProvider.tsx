@@ -10,10 +10,17 @@ import {
   refreshUserToken,
 } from "@/src/domain/auth/auth.usecase";
 
+import {
+  loginWithSocialUser,
+  SocialProvider,
+} from "@/src/domain/auth/social.usecase";
+
 type AuthContextType = {
   status: AuthStatus;
   user: AuthUser | null;
+
   login: (email: string, password: string) => Promise<void>;
+  loginSocial: (provider: SocialProvider, token: string) => Promise<void>;
   logout: () => Promise<void>;
 };
 
@@ -60,6 +67,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setStatus("authenticated");
   };
 
+  // 🔥 LOGIN SOCIAL (PRO)
+  const loginSocial = async (provider: SocialProvider, token: string) => {
+    const response = await loginWithSocialUser(provider, token);
+
+    await authStorage.setTokens(response.accessToken, response.refreshToken);
+
+    setUser(response.user);
+    setStatus("authenticated");
+  };
+
   const logout = async () => {
     try {
       const refreshToken = await authStorage.getRefreshToken();
@@ -75,7 +92,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ status, user, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        status,
+        user,
+        login,
+        loginSocial,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -83,8 +108,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
+
   if (!context) {
     throw new Error("useAuth must be used inside AuthProvider");
   }
+
   return context;
 };

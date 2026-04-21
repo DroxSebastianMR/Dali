@@ -8,6 +8,7 @@ export const API_ENDPOINTS = {
     REFRESH: "/clientes/auth/refresh-token",
     LOGOUT: "/clientes/auth/logout",
     ME: "/clientes/auth/me",
+    SOCIAL_LOGIN: "/clientes/auth/social",
   },
 
   NOTIFICATIONS: {
