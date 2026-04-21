@@ -1,30 +1,32 @@
 import {
+  AuthApiResponse,
   LoginResponse,
   MeResponse,
   RefreshResponse,
-} from "@/src/infrastructure/api/auth/services/auth.types";
+  SocialProvider,
+} from "./auth.types";
+
+import { mapAuthResponse, mapRefreshResponse } from "./auth.mapper";
+
 import { apiClient } from "@/src/infrastructure/api/client/axios.instance";
 import { API_ENDPOINTS } from "@/src/infrastructure/api/endpoints";
 
-type SocialProvider = "google" | "facebook" | "apple";
-
 export const authService = {
   login: async (email: string, password: string): Promise<LoginResponse> => {
-    const { data } = await apiClient.post<LoginResponse>(
+    const { data } = await apiClient.post<AuthApiResponse>(
       API_ENDPOINTS.AUTH.LOGIN,
       { email, password },
     );
 
-    return data;
+    return mapAuthResponse(data);
   },
 
   refreshToken: async (refreshToken: string): Promise<RefreshResponse> => {
-    const { data } = await apiClient.post<RefreshResponse>(
-      API_ENDPOINTS.AUTH.REFRESH,
-      { refresh_token: refreshToken },
-    );
+    const { data } = await apiClient.post(API_ENDPOINTS.AUTH.REFRESH, {
+      refresh_token: refreshToken,
+    });
 
-    return data;
+    return mapRefreshResponse(data);
   },
 
   me: async (): Promise<MeResponse> => {
@@ -43,7 +45,7 @@ export const authService = {
     provider: SocialProvider,
     token: string,
   ): Promise<LoginResponse> => {
-    const { data } = await apiClient.post<LoginResponse>(
+    const { data } = await apiClient.post<AuthApiResponse>(
       API_ENDPOINTS.AUTH.SOCIAL_LOGIN,
       {
         provider,
@@ -51,6 +53,6 @@ export const authService = {
       },
     );
 
-    return data;
+    return mapAuthResponse(data);
   },
 };

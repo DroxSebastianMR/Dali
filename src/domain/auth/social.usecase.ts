@@ -1,16 +1,8 @@
 import { authService } from "@/src/infrastructure/api/auth/services/auth.service";
-
-export type SocialProvider = "google" | "facebook" | "apple";
-
-export type SocialLoginResult = {
-  accessToken: string;
-  refreshToken: string;
-  user: {
-    id: string;
-    email: string;
-    nombre?: string;
-  };
-};
+import {
+  LoginResponse,
+  SocialProvider,
+} from "@/src/infrastructure/api/auth/services/auth.types";
 
 export class SocialAuthError extends Error {
   constructor(message: string) {
@@ -22,24 +14,24 @@ export class SocialAuthError extends Error {
 export const loginWithSocialUser = async (
   provider: SocialProvider,
   token: string,
-): Promise<SocialLoginResult> => {
+): Promise<LoginResponse> => {
   if (!token || token.trim().length === 0) {
     throw new SocialAuthError("Token de autenticación inválido");
   }
+
   if (!provider) {
     throw new SocialAuthError("Proveedor no válido");
   }
+
   try {
+    // 🔥 YA NO TRANSFORMAS NADA
     const response = await authService.loginSocial(provider, token);
+
     if (!response?.accessToken || !response?.refreshToken) {
       throw new SocialAuthError("Respuesta inválida del servidor");
     }
 
-    return {
-      accessToken: response.accessToken,
-      refreshToken: response.refreshToken,
-      user: response.user,
-    };
+    return response; // ✅ DIRECTO
   } catch (error: any) {
     if (error?.response?.status === 401) {
       throw new SocialAuthError("Credenciales sociales inválidas");

@@ -17,44 +17,51 @@ export const useLogin = () => {
   });
 
   const [loading, setLoading] = useState(false);
+
   const onChange = (field: keyof LoginForm, value: string) => {
-    setForm((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setForm((prev) => ({ ...prev, [field]: value }));
   };
-  const validate = (): boolean => {
+
+  const validate = (): string | null => {
     if (!form.email.trim() || !form.password.trim()) {
-      show("Completa todos los campos", "error");
-      return false;
+      return "Completa todos los campos";
     }
-
     if (!form.email.includes("@")) {
-      show("Correo inválido", "error");
-      return false;
+      return "Correo inválido";
     }
-
     if (form.password.length < 6) {
-      show("La contraseña debe tener al menos 6 caracteres", "error");
-      return false;
+      return "Mínimo 6 caracteres";
     }
-
-    return true;
+    return null;
   };
-  const handleError = (error: unknown) => {
+
+  const handleError = (error: any) => {
     console.error("Login error:", error);
 
-    show("Credenciales incorrectas", "error");
+    const apiError = error?.response?.data;
+
+    if (apiError?.code === "SYSTEM_MAINTENANCE") {
+      return show(apiError.message || "Sistema en mantenimiento", "error");
+    }
+
+    if (error?.response?.status === 401) {
+      return show("Credenciales incorrectas", "error");
+    }
+
+    if (error?.message === "Network Error") {
+      return show("Sin conexión a internet", "error");
+    }
+
+    return show("Error inesperado", "error");
   };
+
   const handleLogin = async () => {
-    if (!validate()) return;
+    const errorMessage = validate();
+    if (errorMessage) return show(errorMessage, "error");
 
     try {
       setLoading(true);
-
       await login(form.email.trim(), form.password);
-
-      show("Bienvenido 👋", "success");
     } catch (error) {
       handleError(error);
     } finally {
