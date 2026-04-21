@@ -34,6 +34,8 @@ export const LoginScreen = () => {
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          scrollEnabled={false}
         >
           <View className="flex-1 bg-[#f6f8f6] justify-center px-6">
             <View className="w-full max-w-md self-center">

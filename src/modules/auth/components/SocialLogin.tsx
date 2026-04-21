@@ -1,8 +1,12 @@
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import React from "react";
-import { Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
+
+import { useSocialLogin } from "@/src/modules/auth/hooks/useSocialLogin";
 
 export const SocialLogin = () => {
+  const { handleSocialLogin, loading } = useSocialLogin();
+
   return (
     <View className="mt-[30px] items-center">
       <View className="flex-row items-center mb-[30px]">
@@ -12,15 +16,34 @@ export const SocialLogin = () => {
       </View>
 
       <View className="flex-row gap-[20px]">
-        <Pressable className="w-[55px] h-[55px] rounded-[15px] bg-white justify-center items-center shadow">
-          <AntDesign name="google" size={22} color="#1c1c1c" />
+        {/* GOOGLE */}
+        <Pressable
+          onPress={() => handleSocialLogin("google")}
+          disabled={loading}
+          className="w-[55px] h-[55px] rounded-[15px] bg-white justify-center items-center shadow"
+        >
+          {loading ? (
+            <ActivityIndicator />
+          ) : (
+            <AntDesign name="google" size={22} color="#1c1c1c" />
+          )}
         </Pressable>
 
-        <Pressable className="w-[55px] h-[55px] rounded-[15px] bg-white justify-center items-center shadow">
+        {/* FACEBOOK */}
+        <Pressable
+          onPress={() => handleSocialLogin("facebook")}
+          disabled={loading}
+          className="w-[55px] h-[55px] rounded-[15px] bg-white justify-center items-center shadow"
+        >
           <FontAwesome name="facebook" size={22} color="#1c1c1c" />
         </Pressable>
 
-        <Pressable className="w-[55px] h-[55px] rounded-[15px] bg-white justify-center items-center shadow">
+        {/* APPLE */}
+        <Pressable
+          onPress={() => handleSocialLogin("apple")}
+          disabled={loading}
+          className="w-[55px] h-[55px] rounded-[15px] bg-white justify-center items-center shadow"
+        >
           <FontAwesome name="apple" size={24} color="#1c1c1c" />
         </Pressable>
       </View>

@@ -6,14 +6,13 @@ import {
 import { apiClient } from "@/src/infrastructure/api/client/axios.instance";
 import { API_ENDPOINTS } from "@/src/infrastructure/api/endpoints";
 
+type SocialProvider = "google" | "facebook" | "apple";
+
 export const authService = {
   login: async (email: string, password: string): Promise<LoginResponse> => {
     const { data } = await apiClient.post<LoginResponse>(
       API_ENDPOINTS.AUTH.LOGIN,
-      {
-        email,
-        password,
-      },
+      { email, password },
     );
 
     return data;
@@ -22,9 +21,7 @@ export const authService = {
   refreshToken: async (refreshToken: string): Promise<RefreshResponse> => {
     const { data } = await apiClient.post<RefreshResponse>(
       API_ENDPOINTS.AUTH.REFRESH,
-      {
-        refresh_token: refreshToken,
-      },
+      { refresh_token: refreshToken },
     );
 
     return data;
@@ -40,5 +37,20 @@ export const authService = {
     await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT, {
       refresh_token: refreshToken,
     });
+  },
+
+  loginSocial: async (
+    provider: SocialProvider,
+    token: string,
+  ): Promise<LoginResponse> => {
+    const { data } = await apiClient.post<LoginResponse>(
+      API_ENDPOINTS.AUTH.SOCIAL_LOGIN,
+      {
+        provider,
+        token,
+      },
+    );
+
+    return data;
   },
 };
