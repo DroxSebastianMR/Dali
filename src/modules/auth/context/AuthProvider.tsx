@@ -10,10 +10,10 @@ import {
   refreshUserToken,
 } from "@/src/domain/auth/auth.usecase";
 
-import {
-  loginWithSocialUser,
-  SocialProvider,
-} from "@/src/domain/auth/social.usecase";
+import { loginWithSocialUser } from "@/src/domain/auth/social.usecase";
+
+import { mapUserToAuthUser } from "@/src/infrastructure/api/auth/services/auth.mapper";
+import { SocialProvider } from "@/src/infrastructure/api/auth/services/auth.types";
 
 type AuthContextType = {
   status: AuthStatus;
@@ -43,13 +43,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return;
       }
 
-      const response = await refreshUserToken(refreshToken);
+      const tokens = await refreshUserToken(refreshToken);
 
-      await authStorage.setTokens(response.accessToken, response.refreshToken);
+      await authStorage.setTokens(tokens.accessToken, tokens.refreshToken);
 
-      const user = await getCurrentUser();
+      const userDTO = await getCurrentUser();
 
-      setUser(user);
+      setUser(mapUserToAuthUser(userDTO));
       setStatus("authenticated");
     } catch {
       await authStorage.clear();
@@ -63,17 +63,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     await authStorage.setTokens(response.accessToken, response.refreshToken);
 
-    setUser(response.user);
+    setUser(mapUserToAuthUser(response.user, response.roles));
     setStatus("authenticated");
   };
 
-  // 🔥 LOGIN SOCIAL (PRO)
   const loginSocial = async (provider: SocialProvider, token: string) => {
     const response = await loginWithSocialUser(provider, token);
 
     await authStorage.setTokens(response.accessToken, response.refreshToken);
 
-    setUser(response.user);
+    setUser(mapUserToAuthUser(response.user, response.roles));
     setStatus("authenticated");
   };
 
