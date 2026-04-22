@@ -11,7 +11,7 @@ import React from "react";
 export const AppShell = () => {
   useAppRuntime();
   useNotifications();
-
+  
   const { mode } = useAppState();
 
   return (

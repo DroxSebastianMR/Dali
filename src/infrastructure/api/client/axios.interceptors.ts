@@ -1,23 +1,38 @@
 import { APP_CONFIG } from "@/src/config/app.config";
-import { AxiosError, AxiosInstance } from "axios";
+import { authStorage } from "@/src/modules/auth/storage/auth.storage";
+import { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axios";
 
 export const setupInterceptors = (client: AxiosInstance) => {
   client.interceptors.request.use(
-    (config) => {
-      config.headers["x-platform"] = APP_CONFIG.PLATFORM;
-      config.headers["x-app-version"] = APP_CONFIG.VERSION;
-      return config;
+    async (config: InternalAxiosRequestConfig) => {
+      try {
+        const token = await authStorage.getAccessToken();
+
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+
+        config.headers["x-platform"] = APP_CONFIG.PLATFORM;
+        config.headers["x-app-version"] = APP_CONFIG.VERSION;
+
+        return config;
+      } catch (error) {
+        return Promise.reject(error);
+      }
     },
-    (error) => Promise.reject(error),
   );
+
   client.interceptors.response.use(
     (response) => response,
-    (error: AxiosError) => {
+
+    async (error: AxiosError) => {
       if (!error.response) {
         return Promise.reject({ type: "NETWORK_ERROR", error });
       }
 
-      switch (error.response.status) {
+      const status = error.response.status;
+
+      switch (status) {
         case 401:
           return Promise.reject({ type: "UNAUTHORIZED", error });
 
@@ -30,7 +45,7 @@ export const setupInterceptors = (client: AxiosInstance) => {
         default:
           return Promise.reject({
             type: "API_ERROR",
-            status: error.response.status,
+            status,
             error,
           });
       }
