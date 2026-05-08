@@ -4,11 +4,12 @@ import { authStorage } from "@/src/modules/auth/storage/auth.storage";
 import { AuthStatus, AuthUser } from "@/src/modules/auth/types/auth.types";
 
 import {
-  getCurrentUser,
   loginUser,
   logoutUser,
   refreshUserToken,
 } from "@/src/domain/auth/auth.usecase";
+
+import { getCurrentUser } from "@/src/domain/users/users.usecase";
 
 import { loginWithSocialUser } from "@/src/domain/auth/social.usecase";
 
@@ -49,7 +50,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       const userDTO = await getCurrentUser();
 
-      setUser(mapUserToAuthUser(userDTO));
+      setUser(mapUserToAuthUser(userDTO.user, userDTO.authorization.roles));
+
       setStatus("authenticated");
     } catch {
       await authStorage.clear();
