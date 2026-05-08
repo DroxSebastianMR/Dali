@@ -1,68 +1,83 @@
+import React, { useCallback, useEffect, useState } from "react";
+
 import { useAppState } from "@/src/app/runtime/AppStateProvider";
 import { checkSystemStatus } from "@/src/domain/system/system.usecase";
-import { BootstrapState } from "@/src/modules/bootstrap/bootstrap.types";
+import { useAuth } from "@/src/modules/auth/context/AuthProvider";
+import { authStorage } from "@/src/modules/auth/storage/auth.storage";
 import { BootstrapLoader } from "@/src/modules/bootstrap/components/BootstrapLoader";
-import React, { useCallback, useEffect, useState } from "react";
 
 type Props = {
   children: React.ReactNode;
 };
 
 export const AppBootstrap = ({ children }: Props) => {
-  const [state, setState] = useState<BootstrapState>({
-    status: "loading",
-  });
-
   const { setMode, setRetryBootstrap } = useAppState();
 
+  const { bootstrapAuth } = useAuth();
+
+  const [bootstrapFinished, setBootstrapFinished] = useState(false);
+
+  const [loaderFinished, setLoaderFinished] = useState(false);
+
   const runBootstrap = useCallback(async () => {
-    setState({ status: "loading" });
     setMode("loading");
 
     try {
-      const decision = await checkSystemStatus();
+      const decision = await Promise.race([
+        checkSystemStatus(),
+        new Promise<any>((resolve) =>
+          setTimeout(
+            () =>
+              resolve({
+                type: "OK",
+              }),
+            1500,
+          ),
+        ),
+      ]);
 
       switch (decision.type) {
         case "MAINTENANCE":
           setMode("maintenance");
-          setState({
-            status: "maintenance",
-            message: decision.status.maintenance.message ?? undefined,
-          });
           break;
 
         case "UPDATE_REQUIRED":
           setMode("update-required");
-          setState({
-            status: "update-required",
-            url: decision.status.app.update?.storeUrl!,
-          });
           break;
 
-        case "OK":
+        default: {
+          const refreshToken = await authStorage.getRefreshToken();
+          if (refreshToken) {
+            bootstrapAuth(refreshToken);
+          }
           setMode("ready");
-          setState({ status: "ready" });
           break;
+        }
       }
     } catch (error: any) {
       if (error?.type === "NETWORK_ERROR") {
         setMode("offline");
-        setState({ status: "offline" });
-        return;
+      } else {
+        setMode("fatal");
       }
-
-      setMode("fatal");
-      setState({ status: "error" });
+    } finally {
+      setBootstrapFinished(true);
     }
-  }, [setMode]);
+  }, [setMode, bootstrapAuth]);
 
   useEffect(() => {
     setRetryBootstrap(runBootstrap);
+
     runBootstrap();
   }, [runBootstrap]);
 
-  if (state.status === "loading") {
-    return <BootstrapLoader />;
+  if (!loaderFinished) {
+    return (
+      <BootstrapLoader
+        completed={bootstrapFinished}
+        onFinish={() => setLoaderFinished(true)}
+      />
+    );
   }
 
   return <>{children}</>;
