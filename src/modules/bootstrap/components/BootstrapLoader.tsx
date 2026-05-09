@@ -28,8 +28,6 @@ export const BootstrapLoader = ({ completed, onFinish }: Props) => {
 
     animationRef.current?.play();
   }, []);
-
-  // salida elegante
   useEffect(() => {
     if (!completed) return;
 
