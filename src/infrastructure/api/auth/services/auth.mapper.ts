@@ -1,9 +1,9 @@
 import {
-    AuthApiResponse,
-    LoginResponse,
-    RefreshResponse,
-    RoleDTO,
-    UserDTO,
+  AuthApiResponse,
+  LoginResponse,
+  RefreshResponse,
+  RoleDTO,
+  UserDTO,
 } from "@/src/infrastructure/api/auth/services/auth.types";
 
 import { AuthUser } from "@/src/modules/auth/types/auth.types";
@@ -26,12 +26,21 @@ export const mapRefreshResponse = (data: any): RefreshResponse => {
 
 export const mapUserToAuthUser = (
   user: UserDTO,
-  roles?: RoleDTO[],
+  roles: RoleDTO[],
 ): AuthUser => {
   return {
-    id: user.id.toString(),
+    id: String(user.id),
+
     email: user.email,
+
     nombre: user.nombre,
-    roles: roles?.map((r) => r.name),
+
+    apellido: user.apellido,
+
+    telefono: user.telefono,
+
+    photoUrl: user.foto_url,
+
+    roles: roles.map((role) => role.name),
   };
 };

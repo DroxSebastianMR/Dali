@@ -1,6 +1,8 @@
-import { PromotionCard } from "@/src/modules/home/components/PromotionCard";
 import React from "react";
-import { FlatList, View } from "react-native";
+
+import { PromotionCard } from "@/src/modules/home/components/PromotionCard";
+import { usePromotionsCarousel } from "@/src/modules/home/hooks/usePromotionsCarousel";
+import { Dimensions, FlatList, View } from "react-native";
 
 export type Promotion = {
   id: string;
@@ -15,16 +17,53 @@ type Props = {
 };
 
 export const PromotionsCarousel = ({ data }: Props) => {
+  const {
+    flatListRef,
+    activeIndex,
+    safeData,
+    startAutoPlay,
+    stopAutoPlay,
+    handleMomentumEnd,
+    handleScrollToIndexFailed,
+  } = usePromotionsCarousel(data);
+
   return (
-    <View className="mt-4">
+    <View className="-mt-2">
       <FlatList
-        data={data}
-        keyExtractor={(item) => item.id}
+        ref={flatListRef}
+        data={safeData}
         horizontal
+        pagingEnabled
+        bounces={false}
+        decelerationRate="fast"
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 16 }}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => <PromotionCard item={item} />}
+        onMomentumScrollEnd={handleMomentumEnd}
+        onTouchStart={stopAutoPlay}
+        onTouchEnd={startAutoPlay}
+        onScrollBeginDrag={stopAutoPlay}
+        onScrollEndDrag={startAutoPlay}
+        onScrollToIndexFailed={handleScrollToIndexFailed}
+        getItemLayout={(_, index) => ({
+          length: Dimensions.get("window").width,
+          offset: Dimensions.get("window").width * index,
+          index,
+        })}
       />
+
+      <View className="flex-row justify-center mt-3">
+        {safeData.map((_, index) => (
+          <View
+            key={index}
+            className={`mx-1 rounded-full ${
+              index === activeIndex
+                ? "bg-green-600 w-6 h-2"
+                : "bg-gray-300 w-2 h-2"
+            }`}
+          />
+        ))}
+      </View>
     </View>
   );
 };

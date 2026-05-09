@@ -1,9 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
 
 import { useAppState } from "@/src/app/runtime/AppStateProvider";
+
 import { checkSystemStatus } from "@/src/domain/system/system.usecase";
+
 import { useAuth } from "@/src/modules/auth/context/AuthProvider";
+
 import { authStorage } from "@/src/modules/auth/storage/auth.storage";
+
 import { BootstrapLoader } from "@/src/modules/bootstrap/components/BootstrapLoader";
 
 type Props = {
@@ -20,21 +24,23 @@ export const AppBootstrap = ({ children }: Props) => {
   const [loaderFinished, setLoaderFinished] = useState(false);
 
   const runBootstrap = useCallback(async () => {
+    /**
+     * Reinicia loader
+     */
+    setLoaderFinished(false);
+
+    /**
+     * Reinicia bootstrap
+     */
+    setBootstrapFinished(false);
+
     setMode("loading");
 
     try {
-      const decision = await Promise.race([
-        checkSystemStatus(),
-        new Promise<any>((resolve) =>
-          setTimeout(
-            () =>
-              resolve({
-                type: "OK",
-              }),
-            1500,
-          ),
-        ),
-      ]);
+      /**
+       * Verifica backend
+       */
+      const decision = await checkSystemStatus();
 
       switch (decision.type) {
         case "MAINTENANCE":
@@ -45,17 +51,30 @@ export const AppBootstrap = ({ children }: Props) => {
           setMode("update-required");
           break;
 
-        default: {
+        case "OK": {
           const refreshToken = await authStorage.getRefreshToken();
+
           if (refreshToken) {
-            bootstrapAuth(refreshToken);
+            await bootstrapAuth(refreshToken);
           }
+
           setMode("ready");
+
           break;
         }
+
+        default:
+          setMode("fatal");
+          break;
       }
     } catch (error: any) {
-      if (error?.type === "NETWORK_ERROR") {
+      console.log("Bootstrap error:", error);
+
+      if (
+        error?.type === "NETWORK_ERROR" ||
+        error?.message?.includes("Network") ||
+        error?.message?.includes("fetch")
+      ) {
         setMode("offline");
       } else {
         setMode("fatal");
@@ -69,7 +88,7 @@ export const AppBootstrap = ({ children }: Props) => {
     setRetryBootstrap(runBootstrap);
 
     runBootstrap();
-  }, [runBootstrap]);
+  }, [runBootstrap, setRetryBootstrap]);
 
   if (!loaderFinished) {
     return (
