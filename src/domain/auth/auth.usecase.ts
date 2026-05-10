@@ -32,3 +32,4 @@ export const refreshUserToken = async (
 export const logoutUser = async (refreshToken: string): Promise<void> => {
   await authService.logout(refreshToken);
 };
+
