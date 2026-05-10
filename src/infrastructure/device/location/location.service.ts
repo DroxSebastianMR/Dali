@@ -3,6 +3,11 @@ import * as Location from "expo-location";
 export type UserLocation = {
   city: string;
   country: string;
+
+  district?: string;
+
+  latitude: number;
+  longitude: number;
 };
 
 const normalizeCity = (value: string): string => {
@@ -33,10 +38,7 @@ export const locationService = {
 
     const place = response[0];
 
-    console.log("LOCATION_DATA", place);
-
     const rawCity =
-      place.district ||
       place.city ||
       place.subregion ||
       place.region ||
@@ -45,7 +47,14 @@ export const locationService = {
 
     return {
       city: normalizeCity(rawCity),
+
       country: place.country || "Desconocido",
+
+      district: place.district || undefined,
+
+      latitude: currentLocation.coords.latitude,
+
+      longitude: currentLocation.coords.longitude,
     };
   },
 };

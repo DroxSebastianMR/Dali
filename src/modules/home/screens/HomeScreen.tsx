@@ -1,5 +1,10 @@
 import React from "react";
 
+import { CategoriesSection } from "@/src/modules/home/components/CategoriesSection";
+import { HomeHeader } from "@/src/modules/home/components/HomeHeader";
+import { PopularProductsSection } from "@/src/modules/home/components/PopularProductsSection";
+import { PromotionsCarousel } from "@/src/modules/home/components/PromotionsCarousel";
+import { useHomeBanners } from "@/src/modules/home/hooks/useHomeBanners";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -8,17 +13,11 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { CategoriesSection } from "@/src/modules/home/components/CategoriesSection";
-import { HomeHeader } from "@/src/modules/home/components/HomeHeader";
-import { PopularProductsSection } from "@/src/modules/home/components/PopularProductsSection";
-import { PromotionsCarousel } from "@/src/modules/home/components/PromotionsCarousel";
-
-import { promotionsMock } from "@/src/modules/home/data/promotions.mock";
-
 export const HomeScreen = () => {
+  const { banners } = useHomeBanners();
+
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
       <KeyboardAvoidingView
@@ -37,12 +36,18 @@ export const HomeScreen = () => {
           >
             <HomeHeader />
 
-            <PromotionsCarousel data={promotionsMock} />
+            <PromotionsCarousel
+              data={banners.map((banner) => ({
+                id: String(banner.id),
+                title: banner.title,
+                subtitle: banner.subtitle || "",
+                image: banner.imageUrl,
+                tag: banner.badgeText,
+              }))}
+            />
 
             <CategoriesSection />
-
             <PopularProductsSection />
-
             <View className="h-2" />
           </ScrollView>
         </TouchableWithoutFeedback>
