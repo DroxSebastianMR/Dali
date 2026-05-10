@@ -34,6 +34,10 @@ export const authService = {
     });
   },
 
+  recover: async (email: string): Promise<void> => {
+    await apiClient.post(API_ENDPOINTS.AUTH.RECOVER, { email });
+  },
+
   loginSocial: async (
     provider: SocialProvider,
     token: string,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -16,6 +16,7 @@ import { AuthInput } from "@/src/modules/auth/components/AuthInput";
 import { AuthStackParamList } from "@/src/app/navigation/AuthNavigator";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useRecoverPassword } from "../hooks/useRecoverPassword";
 
 type NavigationProp = NativeStackNavigationProp<
   AuthStackParamList,
@@ -24,22 +25,7 @@ type NavigationProp = NativeStackNavigationProp<
 
 export const RecoverPasswordScreen = () => {
   const navigation = useNavigation<NavigationProp>();
-
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const handleRecover = async () => {
-    try {
-      setLoading(true);
-      await new Promise((r) => setTimeout(r, 1000));
-
-      console.log("Recuperar contraseña para:", email);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { form, loading, onChange, handleRecoverPassword } = useRecoverPassword();
 
   return (
     <KeyboardAvoidingView
@@ -63,13 +49,18 @@ export const RecoverPasswordScreen = () => {
               <View className="mt-6">
                 <AuthInput
                   placeholder="Email"
-                  value={email}
-                  onChangeText={setEmail}
+                  value={form.email}
+                  onChangeText={(value) => 
+                    onChange("email", value)
+                  }
+                  // keyboardType="email-address"
+                  // autoCapitalize="none"
+                  // autoCorrect={false}
                 />
 
                 <AuthButton
                   title={loading ? "Enviando..." : "Enviar enlace"}
-                  onPress={handleRecover}
+                  onPress={handleRecoverPassword}
                 />
               </View>
 

@@ -33,3 +33,18 @@ export const logoutUser = async (refreshToken: string): Promise<void> => {
   await authService.logout(refreshToken);
 };
 
+export const recoverPassword = async (email: string): Promise<void> => {
+  const normalizedEmail = email.trim().toLowerCase();
+
+  if (!normalizedEmail) {
+    throw new Error("El correo es requerido");
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRegex.test(normalizedEmail)) {
+    throw new Error("Correo inválido");
+  }
+
+  await authService.recover(normalizedEmail);
+}
