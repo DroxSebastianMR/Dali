@@ -16,7 +16,7 @@ export const PopularProductsSection = () => {
 
         <TouchableOpacity activeOpacity={0.7}>
           <Text className="text-[14px] font-semibold text-green-700">
-            Ver todos
+            Ver todas
           </Text>
         </TouchableOpacity>
       </View>
