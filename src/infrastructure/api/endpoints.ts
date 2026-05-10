@@ -15,6 +15,10 @@ export const API_ENDPOINTS = {
     ME: "/users/me",
   },
 
+  HOME: {
+    BANNERS: "/home/banners",
+  },
+
   NOTIFICATIONS: {
     REGISTER_TOKEN: "/notifications/register-token",
   },
