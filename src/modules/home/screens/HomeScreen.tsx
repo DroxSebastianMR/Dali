@@ -1,31 +1,52 @@
 import React from "react";
+
 import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
 
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import { CategoriesSection } from "@/src/modules/home/components/CategoriesSection";
 import { HomeHeader } from "@/src/modules/home/components/HomeHeader";
+import { PopularProductsSection } from "@/src/modules/home/components/PopularProductsSection";
 import { PromotionsCarousel } from "@/src/modules/home/components/PromotionsCarousel";
 
 import { promotionsMock } from "@/src/modules/home/data/promotions.mock";
 
 export const HomeScreen = () => {
   return (
-    <KeyboardAvoidingView
-      className="flex-1"
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View className="flex-1 bg-background">
-          <HomeHeader />
-          <PromotionsCarousel data={promotionsMock} />
-          <CategoriesSection />
-        </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+    <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView
+            className={`flex-1 ${Platform.OS === "ios" ? "-mt-2" : ""}`}
+            contentContainerStyle={{
+              paddingBottom: Platform.OS === "ios" ? 120 : 105,
+            }}
+            showsVerticalScrollIndicator={false}
+            bounces={Platform.OS === "ios"}
+            alwaysBounceVertical={false}
+          >
+            <HomeHeader />
+
+            <PromotionsCarousel data={promotionsMock} />
+
+            <CategoriesSection />
+
+            <PopularProductsSection />
+
+            <View className="h-2" />
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
