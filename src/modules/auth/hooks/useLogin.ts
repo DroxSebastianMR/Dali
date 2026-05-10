@@ -26,22 +26,17 @@ export const useLogin = () => {
     if (!form.email.trim() || !form.password.trim()) {
       return "Completa todos los campos";
     }
-    if (!form.email.includes("@")) {
-      return "Correo inválido";
-    }
+
     if (form.password.length < 6) {
       return "Mínimo 6 caracteres";
     }
+
     return null;
   };
 
   const handleError = (error: any) => {
-    console.error("Login error:", error);
-
-    const apiError = error?.response?.data;
-
-    if (apiError?.code === "SYSTEM_MAINTENANCE") {
-      return show(apiError.message || "Sistema en mantenimiento", "error");
+    if (error?.message === "INVALID_EMAIL") {
+      return show("Correo inválido", "error");
     }
 
     if (error?.response?.status === 401) {
@@ -61,7 +56,7 @@ export const useLogin = () => {
 
     try {
       setLoading(true);
-      await login(form.email.trim(), form.password);
+      await login(form.email, form.password);
     } catch (error) {
       handleError(error);
     } finally {
