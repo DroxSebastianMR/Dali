@@ -1,13 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 
 import { useAppState } from "@/src/app/runtime/AppStateProvider";
-
 import { checkSystemStatus } from "@/src/domain/system/system.usecase";
-
 import { useAuth } from "@/src/modules/auth/context/AuthProvider";
-
 import { authStorage } from "@/src/modules/auth/storage/auth.storage";
-
 import { BootstrapLoader } from "@/src/modules/bootstrap/components/BootstrapLoader";
 
 type Props = {
@@ -24,22 +20,12 @@ export const AppBootstrap = ({ children }: Props) => {
   const [loaderFinished, setLoaderFinished] = useState(false);
 
   const runBootstrap = useCallback(async () => {
-    /**
-     * Reinicia loader
-     */
     setLoaderFinished(false);
-
-    /**
-     * Reinicia bootstrap
-     */
     setBootstrapFinished(false);
 
     setMode("loading");
 
     try {
-      /**
-       * Verifica backend
-       */
       const decision = await checkSystemStatus();
 
       switch (decision.type) {

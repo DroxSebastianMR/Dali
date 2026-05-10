@@ -1,14 +1,24 @@
 import { authService } from "@/src/infrastructure/api/auth/services/auth.service";
 import {
   LoginResponse,
-  RefreshResponse
+  RefreshResponse,
 } from "@/src/infrastructure/api/auth/services/auth.types";
+import {
+  isValidEmail,
+  normalizeEmail,
+} from "@/src/shared/validators/email.validator";
 
 export const loginUser = async (
   email: string,
   password: string,
 ): Promise<LoginResponse> => {
-  const response = await authService.login(email, password);
+  const normalizedEmail = normalizeEmail(email);
+
+  if (!isValidEmail(normalizedEmail)) {
+    throw new Error("INVALID_EMAIL");
+  }
+
+  const response = await authService.login(normalizedEmail, password);
 
   if (!response?.accessToken || !response?.refreshToken) {
     throw new Error("Respuesta inválida del servidor");
@@ -34,17 +44,11 @@ export const logoutUser = async (refreshToken: string): Promise<void> => {
 };
 
 export const recoverPassword = async (email: string): Promise<void> => {
-  const normalizedEmail = email.trim().toLowerCase();
+  const normalizedEmail = normalizeEmail(email);
 
-  if (!normalizedEmail) {
-    throw new Error("El correo es requerido");
-  }
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  if (!emailRegex.test(normalizedEmail)) {
-    throw new Error("Correo inválido");
+  if (!isValidEmail(normalizedEmail)) {
+    throw new Error("INVALID_EMAIL");
   }
 
   await authService.recover(normalizedEmail);
-}
+};

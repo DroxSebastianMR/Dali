@@ -25,7 +25,8 @@ type NavigationProp = NativeStackNavigationProp<
 
 export const RecoverPasswordScreen = () => {
   const navigation = useNavigation<NavigationProp>();
-  const { form, loading, onChange, handleRecoverPassword } = useRecoverPassword();
+  const { form, loading, onChange, handleRecoverPassword } =
+    useRecoverPassword();
 
   return (
     <KeyboardAvoidingView
@@ -50,14 +51,8 @@ export const RecoverPasswordScreen = () => {
                 <AuthInput
                   placeholder="Email"
                   value={form.email}
-                  onChangeText={(value) => 
-                    onChange("email", value)
-                  }
-                  // keyboardType="email-address"
-                  // autoCapitalize="none"
-                  // autoCorrect={false}
+                  onChangeText={(value) => onChange("email", value)}
                 />
-
                 <AuthButton
                   title={loading ? "Enviando..." : "Enviar enlace"}
                   onPress={handleRecoverPassword}
