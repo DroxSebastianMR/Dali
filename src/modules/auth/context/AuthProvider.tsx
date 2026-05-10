@@ -1,10 +1,12 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-
-import { authStorage } from "@/src/modules/auth/storage/auth.storage";
-import { AuthStatus, AuthUser } from "@/src/modules/auth/types/auth.types";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 import {
-  getCurrentUser,
   loginUser,
   logoutUser,
   refreshUserToken,
@@ -12,15 +14,31 @@ import {
 
 import { loginWithSocialUser } from "@/src/domain/auth/social.usecase";
 
+import { getCurrentUser } from "@/src/domain/users/users.usecase";
+
 import { mapUserToAuthUser } from "@/src/infrastructure/api/auth/services/auth.mapper";
+
 import { SocialProvider } from "@/src/infrastructure/api/auth/services/auth.types";
+
+import { authStorage } from "@/src/modules/auth/storage/auth.storage";
+
+import { AuthStatus, AuthUser } from "@/src/modules/auth/types/auth.types";
 
 type AuthContextType = {
   status: AuthStatus;
+
   user: AuthUser | null;
 
+  setAuth: (user: AuthUser | null, status: AuthStatus) => void;
+
+  bootstrapAuth: (refreshToken: string) => void;
+
+  hydrateUser: (refreshToken: string) => Promise<void>;
+
   login: (email: string, password: string) => Promise<void>;
+
   loginSocial: (provider: SocialProvider, token: string) => Promise<void>;
+
   logout: () => Promise<void>;
 };
 
@@ -28,32 +46,73 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [status, setStatus] = useState<AuthStatus>("checking");
+
   const [user, setUser] = useState<AuthUser | null>(null);
 
   useEffect(() => {
-    initAuth();
+    loadCachedUser();
   }, []);
 
-  const initAuth = async () => {
+  const loadCachedUser = async () => {
     try {
-      const refreshToken = await authStorage.getRefreshToken();
+      const cachedUser = await authStorage.getUser();
 
-      if (!refreshToken) {
+      if (!cachedUser) {
         setStatus("unauthenticated");
         return;
       }
 
+      setUser(cachedUser);
+
+      setStatus("authenticated");
+    } catch (error) {
+      console.log("Error loading cached user:", error);
+
+      setStatus("unauthenticated");
+    }
+  };
+
+  const setAuth = async (user: AuthUser | null, status: AuthStatus) => {
+    setUser(user);
+
+    setStatus(status);
+
+    if (user) {
+      await authStorage.setUser(user);
+    }
+  };
+
+  const bootstrapAuth = useCallback((refreshToken: string) => {
+    setStatus("authenticated");
+
+    void hydrateUser(refreshToken);
+  }, []);
+
+  const hydrateUser = async (refreshToken: string) => {
+    try {
       const tokens = await refreshUserToken(refreshToken);
 
       await authStorage.setTokens(tokens.accessToken, tokens.refreshToken);
 
       const userDTO = await getCurrentUser();
 
-      setUser(mapUserToAuthUser(userDTO));
+      const mappedUser = mapUserToAuthUser(
+        userDTO.user,
+        userDTO.authorization.roles,
+      );
+
+      setUser(mappedUser);
+
+      await authStorage.setUser(mappedUser);
+
       setStatus("authenticated");
-    } catch {
+    } catch (error) {
+      console.log("Error hydrating user:", error);
+
       await authStorage.clear();
+
       setUser(null);
+
       setStatus("unauthenticated");
     }
   };
@@ -63,7 +122,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     await authStorage.setTokens(response.accessToken, response.refreshToken);
 
-    setUser(mapUserToAuthUser(response.user, response.roles));
+    const mappedUser = mapUserToAuthUser(response.user, response.roles);
+
+    setUser(mappedUser);
+
+    await authStorage.setUser(mappedUser);
+
     setStatus("authenticated");
   };
 
@@ -72,7 +136,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     await authStorage.setTokens(response.accessToken, response.refreshToken);
 
-    setUser(mapUserToAuthUser(response.user, response.roles));
+    const mappedUser = mapUserToAuthUser(response.user, response.roles);
+
+    setUser(mappedUser);
+
+    await authStorage.setUser(mappedUser);
+
     setStatus("authenticated");
   };
 
@@ -83,9 +152,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (refreshToken) {
         await logoutUser(refreshToken);
       }
+    } catch (error) {
+      console.log("Error logout:", error);
     } finally {
       await authStorage.clear();
+
       setUser(null);
+
       setStatus("unauthenticated");
     }
   };
@@ -95,6 +168,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         status,
         user,
+        setAuth,
+
+        bootstrapAuth,
+        hydrateUser,
+
         login,
         loginSocial,
         logout,

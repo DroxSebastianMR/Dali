@@ -1,9 +1,8 @@
 import {
   AuthApiResponse,
   LoginResponse,
-  MeResponse,
   RefreshResponse,
-  SocialProvider,
+  SocialProvider
 } from "./auth.types";
 
 import { mapAuthResponse, mapRefreshResponse } from "./auth.mapper";
@@ -29,16 +28,14 @@ export const authService = {
     return mapRefreshResponse(data);
   },
 
-  me: async (): Promise<MeResponse> => {
-    const { data } = await apiClient.get<MeResponse>(API_ENDPOINTS.AUTH.ME);
-
-    return data;
-  },
-
   logout: async (refreshToken: string): Promise<void> => {
     await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT, {
       refresh_token: refreshToken,
     });
+  },
+
+  recover: async (email: string): Promise<void> => {
+    await apiClient.post(API_ENDPOINTS.AUTH.RECOVER, { email });
   },
 
   loginSocial: async (

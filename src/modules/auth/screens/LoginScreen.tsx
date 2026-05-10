@@ -94,8 +94,6 @@ export const LoginScreen = () => {
               </View>
             </View>
           </ScrollView>
-
-          {/* 🔥 OVERLAY GLOBAL */}
           <ScreenLoader visible={loading} />
         </View>
       </TouchableWithoutFeedback>
