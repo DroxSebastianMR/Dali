@@ -11,8 +11,11 @@ import { AuthUser } from "@/src/modules/auth/types/auth.types";
 export const mapAuthResponse = (data: AuthApiResponse): LoginResponse => {
   return {
     accessToken: data.token.access_token,
+
     refreshToken: data.token.refresh_token,
+
     user: data.user,
+
     roles: data.authorization.roles,
   };
 };
@@ -20,6 +23,7 @@ export const mapAuthResponse = (data: AuthApiResponse): LoginResponse => {
 export const mapRefreshResponse = (data: any): RefreshResponse => {
   return {
     accessToken: data.access_token,
+
     refreshToken: data.refresh_token,
   };
 };
@@ -33,13 +37,13 @@ export const mapUserToAuthUser = (
 
     email: user.email,
 
-    nombre: user.nombre,
+    first_name: user.first_name,
 
-    apellido: user.apellido,
+    last_name: user.last_name,
 
-    telefono: user.telefono,
+    phone: user.phone,
 
-    photoUrl: user.foto_url,
+    photo_url: user.photo_url,
 
     roles: roles.map((role) => role.name),
   };
