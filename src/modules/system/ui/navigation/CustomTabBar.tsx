@@ -1,9 +1,10 @@
 import { ScanButton } from "@/src/modules/system/ui/navigation/ScanButton";
 import { TabBarBackground } from "@/src/modules/system/ui/navigation/TabBarBackground";
 import {
-    HapticType,
-    triggerHaptic,
+  HapticType,
+  triggerHaptic,
 } from "@/src/shared/haptics/haptics.service";
+
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { Heart, Home, List, User } from "lucide-react-native";
 import React, { useCallback } from "react";
@@ -22,7 +23,11 @@ const TABS_CONFIG: Record<
   Profile: { icon: User, label: "Perfil" },
 };
 
-export const CustomTabBar = ({ state, navigation }: BottomTabBarProps) => {
+export const CustomTabBar = ({
+  state,
+  navigation,
+  currentRoute,
+}: BottomTabBarProps & { currentRoute?: string }) => {
   const handleNavigation = useCallback(
     async (routeName: string, isFocused: boolean) => {
       if (isFocused) return;
@@ -38,6 +43,10 @@ export const CustomTabBar = ({ state, navigation }: BottomTabBarProps) => {
     navigation.navigate("Scan");
   }, [navigation]);
 
+  if (currentRoute === "Scan") {
+    return null;
+  }
+
   return (
     <View className="absolute bottom-0 left-0 right-0">
       <TabBarBackground />
@@ -45,13 +54,16 @@ export const CustomTabBar = ({ state, navigation }: BottomTabBarProps) => {
       <View className="absolute bottom-0 left-0 right-0 pt-4 pb-8 px-4 flex-row items-center justify-between">
         {state.routes.map((route, index) => {
           const isFocused = state.index === index;
+
           if (route.name === "Scan") {
             return <ScanButton key={route.key} onPress={handleScanPress} />;
           }
+
           const tabConfig = TABS_CONFIG[route.name];
           if (!tabConfig) return null;
 
           const Icon = tabConfig.icon;
+
           const isLeftSide = index === 1;
           const isRightSide = index === 3;
 

@@ -10,19 +10,31 @@ import React from "react";
 
 import { useAuth } from "@/src/modules/auth/context/AuthProvider";
 import { useUserLocation } from "@/src/modules/location/hooks/useUserLocation";
+
 import { Image, Pressable, Text, TextInput, View } from "react-native";
+
 import { SafeAreaView } from "react-native-safe-area-context";
+
+import { useNavigation } from "@react-navigation/native";
 
 export const HomeHeader = () => {
   const { city, country } = useUserLocation();
   const { user, logout } = useAuth();
+
+  const navigation = useNavigation<any>();
+
   const avatar = user?.photo_url?.trim() || "https://i.pravatar.cc/100";
+
   const handleLogout = async () => {
     try {
       await logout();
     } catch (error) {
       console.log("Error al cerrar sesión", error);
     }
+  };
+
+  const goToScanner = () => {
+    navigation.navigate("Scan");
   };
 
   return (
@@ -51,15 +63,12 @@ export const HomeHeader = () => {
 
           <Pressable onPress={handleLogout}>
             <Image
-              source={{
-                uri: avatar,
-              }}
+              source={{ uri: avatar }}
               className="w-10 h-10 rounded-full border-2 border-green-600"
             />
           </Pressable>
         </View>
       </View>
-
       <View className="flex-row items-center mt-5">
         <View className="flex-1 flex-row items-center bg-white rounded-2xl px-4 py-3 shadow-sm">
           <Search size={18} color="#9ca3af" />
@@ -73,7 +82,10 @@ export const HomeHeader = () => {
           <View className="flex-row items-center ml-2">
             <View className="w-[1px] h-5 bg-gray-200 mr-2" />
 
-            <QrCode size={18} color="#16a34a" />
+            {/* 📸 BOTÓN SCANNER */}
+            <Pressable onPress={goToScanner}>
+              <QrCode size={18} color="#16a34a" />
+            </Pressable>
           </View>
         </View>
 

@@ -22,4 +22,7 @@ export const API_ENDPOINTS = {
   NOTIFICATIONS: {
     REGISTER_TOKEN: "/notifications/register-token",
   },
+  SCANNER: {
+    ANALYZE: "/scanner/analyze",
+  },
 } as const;
