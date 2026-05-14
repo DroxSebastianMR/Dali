@@ -16,7 +16,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export const HomeHeader = () => {
   const { city, country } = useUserLocation();
   const { user, logout } = useAuth();
-  const avatar = user?.photoUrl?.trim() || "https://i.pravatar.cc/100";
+  const avatar = user?.photo_url?.trim() || "https://i.pravatar.cc/100";
   const handleLogout = async () => {
     try {
       await logout();

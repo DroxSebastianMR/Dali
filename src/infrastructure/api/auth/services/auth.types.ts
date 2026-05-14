@@ -8,15 +8,25 @@ export type TokenDTO = {
 
 export type UserDTO = {
   id: number;
+
   email: string;
-  nombre: string;
-  apellido: string;
-  telefono: string | null;
-  foto_url: string | null;
-  estado: string;
+
+  first_name: string;
+
+  last_name: string;
+
+  phone: string | null;
+
+  photo_url: string | null;
+
+  status: string;
+
   email_verified: boolean;
+
   telefono_verified: boolean;
+
   last_login_at: string;
+
   created_at: string;
 };
 
@@ -27,13 +37,17 @@ export type RoleDTO = {
 
 export type AuthApiResponse = {
   token: TokenDTO;
+
   user: UserDTO;
+
   authorization: {
     roles: RoleDTO[];
   };
+
   context: {
     businesses: any[];
   };
+
   meta: {
     server_time: string;
     enviroment: string;
@@ -51,6 +65,7 @@ export type LoginResponse = AuthTokens & {
 };
 
 export type RefreshResponse = AuthTokens;
+
 export type MeResponse = UserDTO;
 
 export type SocialProvider = "google" | "facebook" | "apple";

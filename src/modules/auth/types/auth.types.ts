@@ -5,13 +5,13 @@ export interface AuthUser {
 
   email: string;
 
-  nombre?: string;
+  first_name?: string;
 
-  apellido?: string;
+  last_name?: string;
 
-  telefono?: string | null;
+  phone?: string | null;
 
-  photoUrl?: string | null;
+  photo_url?: string | null;
 
   roles?: string[];
 }

@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Dali",
-    "slug": "Dali",
+    "slug": "dali",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -9,9 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sebastianmercado.dali"
     },
     "android": {
+      "package": "com.sebastianmercado.dali",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -44,6 +46,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "0f390fba-851e-45d1-b1b0-1be628a4935a"
+      }
     }
   }
 }

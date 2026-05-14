@@ -1,14 +1,24 @@
 export type UserDTO = {
   id: number;
+
   email: string;
-  nombre: string;
-  apellido: string;
-  telefono: string | null;
-  foto_url: string | null;
-  estado: string;
+
+  first_name: string;
+
+  last_name: string;
+
+  phone: string | null;
+
+  photo_url: string | null;
+
+  status: string;
+
   email_verified: boolean;
+
   telefono_verified: boolean;
+
   last_login_at: string;
+
   created_at: string;
 };
 
