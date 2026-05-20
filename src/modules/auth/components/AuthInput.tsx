@@ -1,21 +1,11 @@
 import React from "react";
-import { TextInput, View } from "react-native";
+import { TextInput, TextInputProps, View } from "react-native";
 
-type Props = {
-  placeholder: string;
+type Props = TextInputProps & {
   secure?: boolean;
-  value?: string;
-  editable?: boolean; // 👈 nuevo
-  onChangeText?: (text: string) => void;
 };
 
-export const AuthInput = ({
-  placeholder,
-  secure,
-  value,
-  editable = true,
-  onChangeText,
-}: Props) => {
+export const AuthInput = ({ secure, editable = true, ...rest }: Props) => {
   return (
     <View
       className={`w-full rounded-[10px] border mb-[15px] ${
@@ -23,12 +13,10 @@ export const AuthInput = ({
       }`}
     >
       <TextInput
-        placeholder={placeholder}
+        {...rest}
         secureTextEntry={secure}
         placeholderTextColor="#9ca3af"
-        value={value}
-        editable={editable} // 👈 clave
-        onChangeText={onChangeText}
+        editable={editable}
         className="px-[15px] py-[15px] text-[14px]"
       />
     </View>

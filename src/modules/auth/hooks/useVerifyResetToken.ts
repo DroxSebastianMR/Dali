@@ -1,45 +1,47 @@
-import { recoverPassword } from "@/src/domain/auth/auth.usecase";
+import { verifyResetToken } from "@/src/domain/auth/auth.usecase";
 import { useToast } from "@/src/modules/system/ui/hooks/useToast";
 import { useState } from "react";
 
-type RecoverPasswordForm = {
-  email: string;
+type VerifyResetTokenForm = {
+  token: string;
 };
 
-export const useRecoverPassword = () => {
+export const useVerifyResetToken = () => {
   const { show } = useToast();
 
-  const [form, setForm] = useState<RecoverPasswordForm>({
-    email: "",
+  const [form, setForm] = useState<VerifyResetTokenForm>({
+    token: "",
   });
 
   const [loading, setLoading] = useState(false);
 
-  const onChange = (field: keyof RecoverPasswordForm, value: string) => {
+  const onChange = (field: keyof VerifyResetTokenForm, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const validate = (): string | null => {
-    if (!form.email.trim()) {
-      return "Completa el campo de correo";
+    if (!form.token.trim()) {
+      return "Completa el campo de código";
     }
 
     return null;
   };
 
   const handleError = (error: any) => {
-    if (error?.message === "INVALID_EMAIL") {
-      return show("Correo inválido", "error");
-    }
+    console.error("Error al verificar el token de restablecimiento:", error);
 
     if (error?.message === "Network Error") {
       return show("Sin conexión a Internet", "error");
     }
 
+    if (error?.response?.status === 400) {
+      return show("El código no es válido", "error");
+    }
+
     return show("Error inesperado", "error");
   };
 
-  const handleRecoverPassword = async (): Promise<boolean> => {
+  const handleVerifyResetToken = async (): Promise<boolean> => {
     const errorMessage = validate();
     if (errorMessage) {
       show(errorMessage, "error");
@@ -48,12 +50,7 @@ export const useRecoverPassword = () => {
 
     try {
       setLoading(true);
-      await recoverPassword(form.email);
-
-      show(
-        "Si el correo existe, se enviará un mensaje de recuperación",
-        "success",
-      );
+      await verifyResetToken(form.token);
       return true;
     } catch (error) {
       handleError(error);
@@ -67,6 +64,6 @@ export const useRecoverPassword = () => {
     form,
     loading,
     onChange,
-    handleRecoverPassword,
+    handleVerifyResetToken,
   };
 };

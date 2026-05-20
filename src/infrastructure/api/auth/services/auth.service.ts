@@ -2,7 +2,7 @@ import {
   AuthApiResponse,
   LoginResponse,
   RefreshResponse,
-  SocialProvider
+  SocialProvider,
 } from "./auth.types";
 
 import { mapAuthResponse, mapRefreshResponse } from "./auth.mapper";
@@ -36,6 +36,10 @@ export const authService = {
 
   recover: async (email: string): Promise<void> => {
     await apiClient.post(API_ENDPOINTS.AUTH.RECOVER, { email });
+  },
+
+  verify: async (token: string): Promise<void> => {
+    await apiClient.post(API_ENDPOINTS.AUTH.VERIFY, { token });
   },
 
   loginSocial: async (

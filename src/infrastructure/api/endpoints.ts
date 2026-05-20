@@ -9,6 +9,7 @@ export const API_ENDPOINTS = {
     LOGOUT: "/auth/logout",
     SOCIAL_LOGIN: "/auth/social",
     RECOVER: "/auth/recover-password",
+    VERIFY: "/auth/verify-reset-token",
   },
 
   USERS: {
