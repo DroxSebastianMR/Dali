@@ -9,29 +9,30 @@ import {
   View,
 } from "react-native";
 
+import { AuthStackParamList } from "@/src/app/navigation/AuthNavigator";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useVerifyResetToken } from "../hooks/useVerifyResetToken";
+
 import { AuthButton } from "@/src/modules/auth/components/AuthButton";
 import { AuthHeader } from "@/src/modules/auth/components/AuthHeader";
 import { AuthInput } from "@/src/modules/auth/components/AuthInput";
 
-import { AuthStackParamList } from "@/src/app/navigation/AuthNavigator";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useRecoverPassword } from "../hooks/useRecoverPassword";
-
 type NavigationProp = NativeStackNavigationProp<
   AuthStackParamList,
-  "RecoverPassword"
+  "VerifyResetToken"
 >;
 
-export const RecoverPasswordScreen = () => {
+export const VerifyResetTokenScreen = () => {
   const navigation = useNavigation<NavigationProp>();
-  const { form, loading, onChange, handleRecoverPassword } =
-    useRecoverPassword();
+  const { form, loading, onChange, handleVerifyResetToken } =
+    useVerifyResetToken();
 
   const onSubmit = async () => {
-    const success = await handleRecoverPassword();
+    const success = await handleVerifyResetToken();
+
     if (success) {
-      navigation.navigate("VerifyResetToken");
+      navigation.navigate("ResetPassword", { token: form.token });
     }
   };
 
@@ -50,30 +51,37 @@ export const RecoverPasswordScreen = () => {
           <View className="flex-1 bg-[#f6f8f6] justify-center px-6">
             <View className="w-full max-w-md self-center">
               <AuthHeader
-                title="Recuperar contraseña"
-                subtitle="Te enviaremos un enlace para restablecerla"
+                title="Verificar código"
+                subtitle="Ingresa el código que enviamos a tu correo"
               />
 
               <View className="mt-6">
                 <AuthInput
-                  placeholder="Email"
-                  value={form.email}
-                  onChangeText={(value) => onChange("email", value)}
+                  placeholder="Código"
+                  value={form.token}
+                  editable={!loading}
+                  autoCapitalize="characters"
+                  autoCorrect={false}
+                  onChangeText={(value) => onChange("token", value)}
                 />
-                <AuthButton
-                  title={loading ? "Enviando..." : "Enviar enlace"}
-                  onPress={onSubmit}
-                />
+
+                <View className="mt-4">
+                  <AuthButton
+                    title={loading ? "Verificando..." : "Verificar código"}
+                    disabled={loading}
+                    onPress={onSubmit}
+                  />
+                </View>
               </View>
 
               <View className="mt-12 items-center">
                 <Text className="text-gray-400 text-sm">
-                  ¿Recordaste tu contraseña?{" "}
+                  ¿No recibiste el código?{" "}
                   <Text
                     className="text-gray-900 font-semibold"
-                    onPress={() => navigation.navigate("Login")}
+                    onPress={() => navigation.navigate("RecoverPassword")}
                   >
-                    Iniciar sesión
+                    Reenviar
                   </Text>
                 </Text>
               </View>

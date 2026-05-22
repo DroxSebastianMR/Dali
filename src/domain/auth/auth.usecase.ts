@@ -52,3 +52,13 @@ export const recoverPassword = async (email: string): Promise<void> => {
 
   await authService.recover(normalizedEmail);
 };
+
+export const verifyResetToken = async (token: string): Promise<void> => {
+  const normalizedToken = token.trim().toUpperCase();
+
+  if (!normalizedToken) {
+    throw new Error("El código es requerido");
+  }
+
+  await authService.verify(normalizedToken);
+};
