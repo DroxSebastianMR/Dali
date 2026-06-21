@@ -1,11 +1,11 @@
 import { authService } from "@/src/infrastructure/api/auth/services/auth.service";
 import {
-  LoginResponse,
-  RefreshResponse,
+    LoginResponse,
+    RefreshResponse,
 } from "@/src/infrastructure/api/auth/services/auth.types";
 import {
-  isValidEmail,
-  normalizeEmail,
+    isValidEmail,
+    normalizeEmail,
 } from "@/src/shared/validators/email.validator";
 
 export const loginUser = async (

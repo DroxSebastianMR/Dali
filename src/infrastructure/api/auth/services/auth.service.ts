@@ -1,8 +1,8 @@
 import {
-  AuthApiResponse,
-  LoginResponse,
-  RefreshResponse,
-  SocialProvider,
+    AuthApiResponse,
+    LoginResponse,
+    RefreshResponse,
+    SocialProvider,
 } from "./auth.types";
 
 import { mapAuthResponse, mapRefreshResponse } from "./auth.mapper";

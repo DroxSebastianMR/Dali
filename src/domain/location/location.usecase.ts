@@ -1,6 +1,6 @@
 import {
-  locationService,
-  UserLocation,
+    locationService,
+    UserLocation,
 } from "@/src/infrastructure/device/location/location.service";
 
 export const getCurrentLocationUseCase = async (): Promise<UserLocation> => {

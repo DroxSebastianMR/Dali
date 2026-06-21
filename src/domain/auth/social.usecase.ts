@@ -1,7 +1,7 @@
 import { authService } from "@/src/infrastructure/api/auth/services/auth.service";
 import {
-  LoginResponse,
-  SocialProvider,
+    LoginResponse,
+    SocialProvider,
 } from "@/src/infrastructure/api/auth/services/auth.types";
 
 export class SocialAuthError extends Error {
