@@ -62,3 +62,24 @@ export const verifyResetToken = async (token: string): Promise<void> => {
 
   await authService.verify(normalizedToken);
 };
+
+export const resetPassword = async (
+  token: string,
+  newPassword: string,
+): Promise<void> => {
+  const normalizedToken = token.trim().toUpperCase();
+
+  if (!normalizedToken) {
+    throw new Error("El token es requerido");
+  }
+
+  if (!newPassword.trim()) {
+    throw new Error("La contraseña es requerida");
+  }
+
+  if (newPassword.length < 8) {
+    throw new Error("La contraseña debe tener al menos 8 caracteres");
+  }
+
+  await authService.reset(normalizedToken, newPassword);
+};
