@@ -1,5 +1,3 @@
-// src/infrastructure/api/scanner/services/scanner.service.ts
-
 import { apiClient } from "@/src/infrastructure/api/client/axios.instance";
 import { API_ENDPOINTS } from "@/src/infrastructure/api/endpoints";
 

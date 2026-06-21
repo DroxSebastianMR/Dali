@@ -1,12 +1,9 @@
-import {
-  ScannerApiResponse,
-  ScannerResponse,
-} from "@/src/infrastructure/api/scanner/services/scanner.types";
+import { ScannerApiResponse, ScannerResponse } from "./scanner.types";
 
 export const mapScannerResponse = (
   response: ScannerApiResponse,
 ): ScannerResponse => {
   return {
-    result: response.data,
+    result: response.data.data,
   };
 };

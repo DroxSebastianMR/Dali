@@ -1,8 +1,12 @@
+import { ScannerResult } from "@/src/modules/scanner/types/scanner.types";
+
 export type ScannerApiResponse = {
   success: boolean;
-  data: string;
+  data: {
+    data: ScannerResult;
+  };
 };
 
 export type ScannerResponse = {
-  result: string;
+  result: ScannerResult;
 };

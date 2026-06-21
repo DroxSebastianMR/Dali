@@ -1,27 +1,32 @@
 import { scannerService } from "@/src/infrastructure/api/scanner/services/scanner.service";
 
-export const analyzeImageUseCase = async (file: {
-  uri: string;
-  name?: string;
-  type?: string;
-}) => {
-  if (!file?.uri) {
+import {
+    AnalyzeImageInput,
+    ScannerResult,
+} from "@/src/modules/scanner/types/scanner.types";
+
+export const analyzeImageUseCase = async ({
+  uri,
+  name = "scanner.jpg",
+  type = "image/jpeg",
+}: AnalyzeImageInput): Promise<ScannerResult> => {
+  if (!uri.trim()) {
     throw new Error("IMAGE_REQUIRED");
   }
 
   const formData = new FormData();
 
   formData.append("image", {
-    uri: file.uri,
-    name: file.name ?? "scanner.jpg",
-    type: file.type ?? "image/jpeg",
+    uri,
+    name,
+    type,
   } as any);
 
-  const response = await scannerService.analyzeImage(formData);
+  const { result } = await scannerService.analyzeImage(formData);
 
-  if (!response?.result) {
+  if (!result) {
     throw new Error("INVALID_SCANNER_RESPONSE");
   }
 
-  return response;
+  return result;
 };
