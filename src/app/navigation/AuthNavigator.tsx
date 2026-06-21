@@ -4,6 +4,7 @@ import React from "react";
 import { LoginScreen } from "@/src/modules/auth/screens/LoginScreen";
 import { RecoverPasswordScreen } from "@/src/modules/auth/screens/RecoverPasswordScreen";
 import { RegisterScreen } from "@/src/modules/auth/screens/RegisterScreen";
+import { ResetPasswordScreen } from "@/src/modules/auth/screens/ResetPasswordScreen";
 import { VerifyResetTokenScreen } from "@/src/modules/auth/screens/VerifyResetTokenScreen";
 
 export type AuthStackParamList = {
@@ -26,6 +27,7 @@ export const AuthNavigator = () => {
         name="VerifyResetToken"
         component={VerifyResetTokenScreen}
       />
+      <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
     </Stack.Navigator>
   );
 };

@@ -10,6 +10,7 @@ export const API_ENDPOINTS = {
     SOCIAL_LOGIN: "/auth/social",
     RECOVER: "/auth/recover-password",
     VERIFY: "/auth/verify-reset-token",
+    RESET: "/auth/reset-password",
   },
 
   USERS: {

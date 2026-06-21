@@ -42,6 +42,13 @@ export const authService = {
     await apiClient.post(API_ENDPOINTS.AUTH.VERIFY, { token });
   },
 
+  reset: async (token: string, newPassword: string): Promise<void> => {
+    await apiClient.post(API_ENDPOINTS.AUTH.RESET, {
+      token,
+      new_password: newPassword,
+    });
+  },
+
   loginSocial: async (
     provider: SocialProvider,
     token: string,
